@@ -7,11 +7,11 @@ echo "-----------------"
 echo
 
 echo "> existing update files"
-ls -alrt "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"/logitechmediaserver-*.rpm*
+ls -alrt "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"/logitechmediaserver_*.deb*
 echo
 
 echo "> retrieve update url"
-LMS_UPDATE_URL=$(curl -s "http://www.mysqueezebox.com/update/?version=7.9.1&revision=1&geturl=1&os=rpm")
+LMS_UPDATE_URL=$(curl -s "http://www.mysqueezebox.com/update/?version=7.9.1&revision=1&geturl=1&os=deb")
 if [ \( -z "${LMS_UPDATE_URL}" \) -o \( "${LMS_UPDATE_URL}" == 0 \) ]
 then
 	echo "Failed to get Slimserver update URL"
@@ -52,16 +52,16 @@ then
 fi
 
 echo
-echo "> stop squeezeboxserver if needed"
-service squeezeboxserver stop
+echo "> stop logitechmediaserver if needed"
+service logitechmediaserver stop
 
 echo
 echo "> install ${LMS_UPDATE_FILE}"
-rpm -Uvh --force "${LMS_UPDATE_FILE}"
+dpkg -i "${LMS_UPDATE_FILE}"
 
 echo
-echo "> start squeezeboxserver"
-service squeezeboxserver start
+echo "> start logitechmediaserver"
+service logitechmediaserver start
 
 echo
 echo "Done."
