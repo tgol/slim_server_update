@@ -11,7 +11,7 @@ ls -alrt "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"/logitechmediaserver
 echo
 
 echo "> retrieve update url"
-LMS_UPDATE_URL=$(curl -s "http://www.mysqueezebox.com/update/?version=7.9.1&revision=1&geturl=1&os=deb")
+LMS_UPDATE_URL=$(curl -s "http://www.mysqueezebox.com/update/?version=7.9.1&revision=1&geturl=1&os=deb$(dpkg --print-architecture)")
 if [ \( -z "${LMS_UPDATE_URL}" \) -o \( "${LMS_UPDATE_URL}" == 0 \) ]
 then
 	echo "Failed to get Slimserver update URL"
