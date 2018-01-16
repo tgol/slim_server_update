@@ -7,7 +7,7 @@ echo "-----------------"
 echo
 
 echo "> existing update files"
-ls -alrt "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"/logitechmediaserver_*.deb*
+ls -alrt "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"/logitechmediaserver_*.deb* 2>/dev/null
 echo
 
 echo "> retrieve update url"
