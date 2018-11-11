@@ -1,17 +1,25 @@
 #!/bin/bash
 
+LMS_VERSION="7.9.2"
+
 echo
 echo "-----------------"
 echo "Slimserver update"
 echo "-----------------"
 echo
 
-echo "> existing update files"
-ls -alrt "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"/logitechmediaserver_*.deb* 2>/dev/null
-echo
+LMS_CURRENT_REVISION="$(head -n1 /usr/share/squeezeboxserver/revision.txt)"
+if [ -z "${LMS_CURRENT_REVISION}" ]
+then
+	echo "failed to get current revision"
+	LMS_CURRENT_REVISION="0000000000"
+else
+	echo "current revision: ${LMS_CURRENT_REVISION}"
+fi
 
+echo
 echo "> retrieve update url"
-LMS_UPDATE_URL=$(curl -s "http://www.mysqueezebox.com/update/?version=7.9.2&revision=1&geturl=1&os=deb$(dpkg --print-architecture)")
+LMS_UPDATE_URL=$(curl -s "http://www.mysqueezebox.com/update/?version=${LMS_VERSION}&revision=1&geturl=1&os=deb$(dpkg --print-architecture)")
 if [ \( -z "${LMS_UPDATE_URL}" \) -o \( "${LMS_UPDATE_URL}" == 0 \) ]
 then
 	echo "Failed to get Slimserver update URL"
@@ -20,7 +28,11 @@ then
 fi
 
 
-echo "${LMS_UPDATE_URL}"
+echo "${LMS_UPDATE_URL}" | grep -E --color=always ".*${LMS_CURRENT_REVISION}.*|$"
+
+echo
+echo "> existing update files"
+ls -alrt "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"/logitechmediaserver_*.deb* 2>/dev/null | grep -E --color=always ".*${LMS_CURRENT_REVISION}.*|$"
 
 echo
 echo "Proceed with the update ?"
