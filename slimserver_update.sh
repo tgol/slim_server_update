@@ -1,6 +1,7 @@
 #!/bin/bash
 
 LMS_VERSION="7.9.2"
+LMS_INSTALLER_FLAVOUR="deb"
 
 echo
 echo "-----------------"
@@ -13,26 +14,32 @@ if [ -z "${LMS_CURRENT_REVISION}" ]
 then
 	echo "failed to get current revision"
 	LMS_CURRENT_REVISION="0000000000"
-else
-	echo "current revision: ${LMS_CURRENT_REVISION}"
 fi
+echo "> current revision: ${LMS_CURRENT_REVISION}"
 
 echo
 echo "> retrieve update url"
-LMS_UPDATE_URL=$(curl -s "http://www.mysqueezebox.com/update/?version=${LMS_VERSION}&revision=1&geturl=1&os=deb$(dpkg --print-architecture)")
-if [ \( -z "${LMS_UPDATE_URL}" \) -o \( "${LMS_UPDATE_URL}" == 0 \) ]
+LMS_UPDATE_URL="$(curl -s "http://www.mysqueezebox.com/update/?\
+version=${LMS_VERSION}&\
+revision=1&\
+geturl=1&\
+os=${LMS_INSTALLER_FLAVOUR}$(dpkg --print-architecture)")"
+
+if [ -z "${LMS_UPDATE_URL}" ] || [ "${LMS_UPDATE_URL}" == "0" ]
 then
 	echo "Failed to get Slimserver update URL"
 	echo "http://wiki.slimdevices.com/index.php/Nightly_Builds"
 	exit 1
 fi
 
-
 echo "${LMS_UPDATE_URL}" | grep -E --color=always ".*${LMS_CURRENT_REVISION}.*|$"
 
 echo
 echo "> existing update files"
-ls -alrt "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"/logitechmediaserver_*.deb* 2>/dev/null | grep -E --color=always ".*${LMS_CURRENT_REVISION}.*|$"
+find "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" \
+	-iname "logitechmediaserver_*.${LMS_INSTALLER_FLAVOUR}*" \
+	-exec ls -alrt {} + | \
+	grep -E --color=always ".*${LMS_CURRENT_REVISION}.*|$"
 
 echo
 echo "Proceed with the update ?"
@@ -55,7 +62,7 @@ then
 	exit 2
 fi
 
-LMS_UPDATE_FILE=$(basename ${LMS_UPDATE_URL})
+LMS_UPDATE_FILE="$(basename "${LMS_UPDATE_URL}")"
 if [ ! -f "${LMS_UPDATE_FILE}" ]
 then
 	echo "Update file not found"
