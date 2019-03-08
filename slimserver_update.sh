@@ -50,6 +50,8 @@ select yn in "Yes" "No"; do
     esac
 done
 
+! pushd "$(dirname "${0}")" > /dev/null && echo "Failed to cd into $(dirname "${0}")" && exit 1
+
 echo
 echo "> downloading update file"
 wget "${LMS_UPDATE_URL}"
