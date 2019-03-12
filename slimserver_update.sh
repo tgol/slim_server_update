@@ -2,6 +2,7 @@
 
 LMS_VERSION="7.9.2"
 LMS_INSTALLER_FLAVOUR="deb"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 echo
 echo "-----------------"
@@ -36,9 +37,9 @@ echo "${LMS_UPDATE_URL}" | grep -E --color=always ".*${LMS_CURRENT_REVISION}.*|$
 
 echo
 echo "> existing update files"
-find "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" \
+find "${SCRIPT_DIR}" \
 	-iname "logitechmediaserver_*.${LMS_INSTALLER_FLAVOUR}*" \
-	-exec ls -alrt {} + | \
+	-exec ls -alrt {} + |
 	grep -E --color=always ".*${LMS_CURRENT_REVISION}.*|$"
 
 echo
@@ -50,7 +51,7 @@ select yn in "Yes" "No"; do
     esac
 done
 
-! pushd "$(dirname "${0}")" > /dev/null && echo "Failed to cd into $(dirname "${0}")" && exit 1
+! pushd "${SCRIPT_DIR}" > /dev/null && echo "Failed to cd into $(dirname "${0}")" && exit 1
 
 echo
 echo "> downloading update file"
